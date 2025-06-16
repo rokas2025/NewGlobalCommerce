@@ -55,7 +55,16 @@ A modern, AI-powered e-commerce platform built with Next.js 14, TypeScript, and 
    # Fill in your Supabase and OpenAI credentials
    ```
 
-4. **Run the development server**
+4. **Set up the database**
+   ```bash
+   # Push schema to Supabase
+   npm run db:push
+   
+   # Seed with sample data (optional)
+   npm run db:seed
+   ```
+
+5. **Run the development server**
    ```bash
    npm run dev
    ```
@@ -83,19 +92,48 @@ global-commerce/
 
 ## 🗄️ Database Schema
 
-The platform uses a comprehensive 27-table PostgreSQL schema:
+The platform uses a comprehensive **22-table** PostgreSQL schema with full relationships and indexes:
 
-- **Core**: Users, Products, Categories, Orders
-- **Inventory**: Warehouses, Stock tracking
-- **Multilingual**: Languages, Translations
-- **AI**: Content generation tracking
-- **System**: Logs, Settings, Notifications
+### **Core Tables (6)**
+- `users`, `user_sessions` - User management and authentication
+- `categories`, `products`, `product_categories`, `product_images` - Product catalog
+
+### **E-commerce Tables (8)**
+- `orders`, `order_items` - Order management
+- `payments` - Payment processing
+- `shipments`, `shipping_methods` - Shipping and logistics
+- `warehouses`, `inventory` - Multi-warehouse inventory tracking
+
+### **Advanced Features (8)**
+- `languages`, `translations` - Multilingual content support
+- `ai_generation_jobs` - AI content generation tracking
+- `activity_logs`, `system_settings`, `notifications` - System management
+- `support_tickets`, `support_ticket_messages` - Customer support
+- `analytics_events` - User behavior tracking
+
+### **Database Features**
+- ✅ **22 tables** with proper relationships and foreign keys
+- ✅ **10 enums** for data consistency
+- ✅ **Comprehensive indexes** for performance optimization
+- ✅ **JSONB fields** for flexible attribute storage
+- ✅ **Migration system** with Drizzle ORM
+- ✅ **Seed script** with sample development data
 
 ## 🔧 Available Scripts
 
-- `npm run dev` - Start development server
+### **Development**
+- `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build for production
 - `npm run start` - Start production server
+
+### **Database**
+- `npm run db:generate` - Generate database migrations
+- `npm run db:push` - Push schema to database
+- `npm run db:migrate` - Run database migrations
+- `npm run db:seed` - Seed database with sample data
+- `npm run db:studio` - Open Drizzle Studio
+
+### **Code Quality**
 - `npm run lint` - Run ESLint
 - `npm run format` - Format code with Prettier
 - `npm run type-check` - Run TypeScript checks
