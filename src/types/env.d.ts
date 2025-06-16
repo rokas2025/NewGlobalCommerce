@@ -9,4 +9,3 @@ declare namespace NodeJS {
     NEXTAUTH_URL?: string
   }
 }
- 

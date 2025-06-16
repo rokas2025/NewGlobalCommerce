@@ -55,7 +55,7 @@
   - [x] 1.4 Set up Supabase project and configure environment variables
   - [x] 1.5 Configure shadcn/ui components library
   - [x] 1.6 Set up development tools (ESLint, Prettier, TypeScript config)
-  - [ ] 1.7 Create basic project folder structure following Next.js 14 conventions
+  - [x] 1.7 Create basic project folder structure following Next.js 14 conventions
   - [ ] 1.8 Configure Tailwind CSS with custom design system colors and spacing
   - [ ] 1.9 Set up Lucide React icons library
   - [ ] 1.10 Create basic .env.example file with required environment variables
