@@ -34,12 +34,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect dashboard routes
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-  }
+  // Protect dashboard routes - TEMPORARILY DISABLED FOR DEMO
+  // if (request.nextUrl.pathname.startsWith('/dashboard')) {
+  //   if (!user) {
+  //     return NextResponse.redirect(new URL('/login', request.url))
+  //   }
+  // }
 
   // Redirect to dashboard if user is already logged in and trying to access auth pages
   if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register') && user) {
