@@ -8,6 +8,10 @@ const nextConfig = {
     // Keep TypeScript checking enabled
     ignoreBuildErrors: false,
   },
+  experimental: {
+    // Ensure proper handling of client components during build
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+  },
 }
 
 export default nextConfig
