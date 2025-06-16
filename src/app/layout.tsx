@@ -15,8 +15,47 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Global Commerce',
-  description: 'Comprehensive e-commerce platform with AI-powered features',
+  title: {
+    default: 'Global Commerce',
+    template: '%s | Global Commerce',
+  },
+  description:
+    'Comprehensive multilingual e-commerce platform with AI-powered content generation and advanced knowledge base functionality',
+  keywords: [
+    'e-commerce',
+    'multilingual',
+    'AI-powered',
+    'global commerce',
+    'online store',
+    'inventory management',
+    'product management',
+  ],
+  authors: [
+    {
+      name: 'Global Commerce Team',
+    },
+  ],
+  creator: 'Global Commerce',
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://globalcommerce.com',
+    title: 'Global Commerce',
+    description: 'Comprehensive multilingual e-commerce platform with AI-powered features',
+    siteName: 'Global Commerce',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Global Commerce',
+    description: 'Comprehensive multilingual e-commerce platform with AI-powered features',
+    creator: '@globalcommerce',
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
 }
 
 export default function RootLayout({
@@ -25,9 +64,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>{children}</Providers>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} bg-background min-h-screen font-sans antialiased`}
+      >
+        <Providers>
+          <div className="relative flex min-h-screen flex-col">
+            <div className="flex-1">{children}</div>
+          </div>
+        </Providers>
       </body>
     </html>
   )

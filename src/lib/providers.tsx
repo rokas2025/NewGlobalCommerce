@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 import { Toaster } from '@/components/ui/sonner'
+import { ThemeProvider, themeConfig } from '@/components/theme-provider'
 
 interface ProvidersProps {
   children: ReactNode
@@ -35,8 +36,16 @@ export function Providers({ children }: ProvidersProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
-      <Toaster richColors position="top-right" />
+      <ThemeProvider
+        attribute="class"
+        defaultTheme={themeConfig.defaultTheme}
+        enableSystem={themeConfig.enableSystem}
+        disableTransitionOnChange={themeConfig.disableTransitionOnChange}
+        storageKey={themeConfig.storageKey}
+      >
+        {children}
+        <Toaster richColors position="top-right" />
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }
