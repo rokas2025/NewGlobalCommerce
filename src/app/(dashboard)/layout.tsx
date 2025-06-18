@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { Sidebar } from '@/components/dashboard/sidebar'
-import { MobileSidebar } from '@/components/dashboard/sidebar'
+import { MobileSidebar, Sidebar } from '@/components/dashboard/sidebar'
 import { Button } from '@/components/ui/button'
 import { Menu } from '@/lib/icons'
+import { useState } from 'react'
 
 export default function DashboardGroupLayout({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
