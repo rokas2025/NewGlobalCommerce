@@ -1,16 +1,15 @@
 import {
   boolean,
   decimal,
+  index,
   integer,
   jsonb,
   pgEnum,
   pgTable,
   text,
   timestamp,
-  uuid,
-  varchar,
-  index,
   unique,
+  uuid,
 } from 'drizzle-orm/pg-core'
 
 // =============================================================================

@@ -48,12 +48,17 @@ const navItems: NavItem[] = [
   },
   {
     title: 'Products',
-    href: '/dashboard/products',
+    href: '/products',
     icon: Package,
     children: [
       {
         title: 'All Products',
-        href: '/dashboard/products',
+        href: '/products',
+        icon: Package,
+      },
+      {
+        title: 'Add Product',
+        href: '/products/new',
         icon: Package,
       },
       {
