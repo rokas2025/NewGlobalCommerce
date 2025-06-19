@@ -41,7 +41,7 @@ export class AuthErrorBoundary extends React.Component<
     }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const errorDetails = handleAuthError(error)
 
     // Log error details
