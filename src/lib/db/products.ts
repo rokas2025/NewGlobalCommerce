@@ -1,31 +1,21 @@
-import { eq, and, or, like, desc, asc, sql, inArray, isNull, gte, lte, count } from 'drizzle-orm'
+import { categories, inventory, productCategories, productImages, products } from '@/drizzle/schema'
 import { db } from '@/lib/db/drizzle'
-import {
-  products,
-  categories,
-  productCategories,
-  productImages,
-  inventory,
-  warehouses,
-} from '@/drizzle/schema'
 import type {
-  Product,
-  ProductWithCategories,
-  ProductWithImages,
-  ProductListItem,
-  ProductListResponse,
-  CreateProductData,
-  UpdateProductData,
-  ProductFilters,
-  ProductPagination,
   Category,
   CategoryWithChildren,
+  CreateProductData,
+  Product,
   ProductAnalytics,
-  Inventory,
+  ProductFilters,
+  ProductListItem,
+  ProductListResponse,
+  ProductPagination,
   ProductStatus,
-  ProductVisibility,
-  ProductSortField,
+  ProductWithCategories,
+  UpdateProductData,
 } from '@/types/products'
+import { ProductSortField } from '@/types/products'
+import { and, asc, count, desc, eq, gte, inArray, isNull, like, lte, or, sql } from 'drizzle-orm'
 
 // Product queries
 export class ProductRepository {

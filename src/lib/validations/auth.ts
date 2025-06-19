@@ -21,7 +21,7 @@ export const signUpSchema = z
       .min(2, 'Full name must be at least 2 characters long')
       .max(50, 'Full name must be less than 50 characters')
       .regex(/^[a-zA-Z\s]+$/, 'Full name can only contain letters and spaces'),
-    role: z.nativeEnum(UserRole).optional().default(UserRole.CUSTOMER),
+    role: z.nativeEnum(UserRole).default(UserRole.CUSTOMER),
     agreeToTerms: z
       .boolean()
       .refine(val => val === true, 'You must agree to the terms and conditions'),
@@ -35,7 +35,7 @@ export const signUpSchema = z
 export const signInSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
-  rememberMe: z.boolean().default(false),
+  rememberMe: z.boolean(),
 })
 
 // Reset password validation schema
@@ -85,9 +85,20 @@ export const emailVerificationSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
 })
 
-// Type exports for forms
-export type SignUpFormData = z.infer<typeof signUpSchema>
-export type SignInFormData = z.infer<typeof signInSchema>
+// Explicit type definitions to ensure consistency
+export type SignUpFormData = {
+  email: string
+  fullName: string
+  role: UserRole
+  password: string
+  confirmPassword: string
+  agreeToTerms: boolean
+}
+export type SignInFormData = {
+  email: string
+  password: string
+  rememberMe: boolean
+}
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 export type UpdatePasswordFormData = z.infer<typeof updatePasswordSchema>
 export type UpdateProfileFormData = z.infer<typeof updateProfileSchema>
