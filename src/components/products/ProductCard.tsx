@@ -1,11 +1,11 @@
 'use client'
 
+import { ProductListItem, ProductStatus, ProductVisibility } from '@/types/products'
 import Link from 'next/link'
 import { useState } from 'react'
-import { Product, ProductStatus, ProductVisibility } from '@/types/products'
 
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -17,8 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Icons } from '@/lib/icons'
-import { formatCurrency } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 
 const statusVariants = {
   [ProductStatus.ACTIVE]: 'default',
@@ -34,7 +33,7 @@ const visibilityVariants = {
 } as const
 
 interface ProductCardProps {
-  product: Product
+  product: ProductListItem
   selected?: boolean
   onSelect?: (selected: boolean) => void
   onEdit?: () => void
@@ -138,26 +137,10 @@ export function ProductCard({
               Archived
             </Badge>
           )}
-          {product.visibility === ProductVisibility.PRIVATE && (
-            <Badge variant="secondary" className="text-xs">
-              Private
-            </Badge>
-          )}
-          {product.visibility === ProductVisibility.HIDDEN && (
-            <Badge variant="outline" className="text-xs">
-              Hidden
-            </Badge>
-          )}
+          {/* Visibility badges not available in ProductListItem */}
         </div>
 
-        {/* Sale Badge */}
-        {product.compareAtPrice && product.compareAtPrice > product.price && (
-          <div className="absolute top-2 right-2 z-10">
-            <Badge variant="destructive" className="text-xs">
-              Sale
-            </Badge>
-          </div>
-        )}
+        {/* Sale Badge - Not available with ProductListItem */}
       </CardHeader>
 
       <CardContent className="space-y-2 p-4">
@@ -176,19 +159,11 @@ export function ProductCard({
           SKU: <code className="bg-muted rounded px-1 py-0.5">{product.sku}</code>
         </div>
 
-        {/* Short Description */}
-        {product.shortDescription && (
-          <p className="text-muted-foreground line-clamp-2 text-xs">{product.shortDescription}</p>
-        )}
+        {/* Short Description - Not available in ProductListItem */}
 
         {/* Price */}
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold">{formatCurrency(product.price)}</span>
-          {product.compareAtPrice && product.compareAtPrice > product.price && (
-            <span className="text-muted-foreground text-sm line-through">
-              {formatCurrency(product.compareAtPrice)}
-            </span>
-          )}
         </div>
 
         {/* Stock Status */}
@@ -210,35 +185,12 @@ export function ProductCard({
           </div>
         </div>
 
-        {/* Categories */}
-        {product.categories && product.categories.length > 0 && (
+        {/* Primary Category */}
+        {product.primaryCategory && (
           <div className="flex flex-wrap gap-1">
-            {product.categories.slice(0, 2).map(category => (
-              <Badge key={category.id} variant="outline" className="text-xs">
-                {category.name}
-              </Badge>
-            ))}
-            {product.categories.length > 2 && (
-              <Badge variant="outline" className="text-xs">
-                +{product.categories.length - 2}
-              </Badge>
-            )}
-          </div>
-        )}
-
-        {/* Tags */}
-        {product.tags && product.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {product.tags.slice(0, 3).map(tag => (
-              <Badge key={tag} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-            {product.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
-                +{product.tags.length - 3}
-              </Badge>
-            )}
+            <Badge variant="outline" className="text-xs">
+              {product.primaryCategory}
+            </Badge>
           </div>
         )}
       </CardContent>
@@ -255,7 +207,7 @@ export function ProductCard({
 
 // Grid container component for products
 interface ProductGridProps {
-  products: Product[]
+  products: ProductListItem[]
   selectedProducts?: string[]
   onSelectProduct?: (productId: string, selected: boolean) => void
   onEditProduct?: (productId: string) => void

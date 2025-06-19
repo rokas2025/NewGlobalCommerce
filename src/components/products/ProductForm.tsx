@@ -1,37 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import { useCreateProduct, useUpdateProduct, useSkuCheck } from '@/hooks/useProducts'
-import { useCategories } from '@/hooks/useProducts'
-import {
-  ProductStatus,
-  ProductVisibility,
-  type Product,
-  type ProductCreateInput,
-  type ProductUpdateInput,
-} from '@/types/products'
+import { useCategories, useCreateProduct, useSkuCheck, useUpdateProduct } from '@/hooks/useProducts'
 import { createProductSchema, updateProductSchema } from '@/lib/validations/products'
+import { ProductStatus, ProductVisibility, type Product } from '@/types/products'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -41,19 +22,18 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 import { Icons } from '@/lib/icons'
-import { cn } from '@/lib/utils'
-import { slugify } from '@/lib/utils'
+import { cn, slugify } from '@/lib/utils'
 
 interface ProductFormProps {
   product?: Product
@@ -71,18 +51,17 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   const createProduct = useCreateProduct()
   const updateProduct = useUpdateProduct()
   const { data: categories } = useCategories()
-  const { mutateAsync: checkSku } = useSkuCheck()
+  const skuCheckQuery = useSkuCheck(watchSku || '', product?.id)
 
   const isEdit = mode === 'edit'
   const schema = isEdit ? updateProductSchema : createProductSchema
 
-  const form = useForm<ProductCreateInput | ProductUpdateInput>({
+  const form = useForm<CreateProductData | UpdateProductData>({
     resolver: zodResolver(schema),
     defaultValues:
       isEdit && product
         ? {
             name: product.name,
-            slug: product.slug,
             description: product.description || '',
             shortDescription: product.shortDescription || '',
             sku: product.sku,
@@ -94,14 +73,13 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
             featuredImageUrl: product.featuredImageUrl || '',
             weight: product.weight || undefined,
             dimensions: product.dimensions || undefined,
-            metaTitle: product.metaTitle || '',
-            metaDescription: product.metaDescription || '',
+            seoTitle: product.seoTitle || '',
+            seoDescription: product.seoDescription || '',
             tags: product.tags || [],
             categoryIds: product.categories?.map(c => c.id) || [],
           }
         : {
             name: '',
-            slug: '',
             description: '',
             shortDescription: '',
             sku: '',
@@ -109,8 +87,8 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
             status: ProductStatus.DRAFT,
             visibility: ProductVisibility.PRIVATE,
             featuredImageUrl: '',
-            metaTitle: '',
-            metaDescription: '',
+            seoTitle: '',
+            seoDescription: '',
             tags: [],
             categoryIds: [],
           },
@@ -129,23 +107,17 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
 
   // SKU validation
   useEffect(() => {
-    const validateSku = async () => {
-      if (!watchSku || (isEdit && watchSku === product?.sku)) {
-        setSkuError(null)
-        return
-      }
-
-      try {
-        const exists = await checkSku(watchSku)
-        setSkuError(exists ? 'SKU already exists' : null)
-      } catch (error) {
-        setSkuError('Failed to validate SKU')
-      }
+    if (!watchSku || (isEdit && watchSku === product?.sku)) {
+      setSkuError(null)
+      return
     }
 
-    const timer = setTimeout(validateSku, 500)
-    return () => clearTimeout(timer)
-  }, [watchSku, checkSku, isEdit, product?.sku])
+    if (skuCheckQuery.data?.exists) {
+      setSkuError('SKU already exists')
+    } else {
+      setSkuError(null)
+    }
+  }, [skuCheckQuery.data, watchSku, isEdit, product?.sku])
 
   // Handle tag operations
   const addTag = () => {
@@ -164,7 +136,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   }
 
   // Handle form submission
-  const onSubmit = async (data: ProductCreateInput | ProductUpdateInput) => {
+  const onSubmit = async (data: CreateProductData | UpdateProductData) => {
     if (skuError) return
 
     setIsSubmitting(true)
@@ -172,11 +144,11 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
       if (isEdit && product) {
         await updateProduct.mutateAsync({
           id: product.id,
-          data: data as ProductUpdateInput,
+          data: data as UpdateProductData,
         })
         router.push(`/products/${product.id}`)
       } else {
-        const result = await createProduct.mutateAsync(data as ProductCreateInput)
+        const result = await createProduct.mutateAsync(data as CreateProductData)
         router.push(`/products/${result.id}`)
       }
     } catch (error) {

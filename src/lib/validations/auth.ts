@@ -21,7 +21,7 @@ export const signUpSchema = z
       .min(2, 'Full name must be at least 2 characters long')
       .max(50, 'Full name must be less than 50 characters')
       .regex(/^[a-zA-Z\s]+$/, 'Full name can only contain letters and spaces'),
-    role: z.nativeEnum(UserRole).default(UserRole.CUSTOMER),
+    role: z.nativeEnum(UserRole),
     agreeToTerms: z
       .boolean()
       .refine(val => val === true, 'You must agree to the terms and conditions'),
@@ -85,15 +85,8 @@ export const emailVerificationSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
 })
 
-// Explicit type definitions to ensure consistency
-export type SignUpFormData = {
-  email: string
-  fullName: string
-  role: UserRole
-  password: string
-  confirmPassword: string
-  agreeToTerms: boolean
-}
+// Type exports for forms - using Zod inference for consistency
+export type SignUpFormData = z.infer<typeof signUpSchema>
 export type SignInFormData = {
   email: string
   password: string

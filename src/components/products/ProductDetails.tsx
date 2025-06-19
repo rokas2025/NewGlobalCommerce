@@ -1,16 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useProduct, useDeleteProduct } from '@/hooks/useProducts'
+import { useDeleteProduct, useProduct } from '@/hooks/useProducts'
 import { ProductStatus, ProductVisibility } from '@/types/products'
+import Link from 'next/link'
+import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Separator } from '@/components/ui/separator'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +16,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +26,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 
 import { Icons } from '@/lib/icons'
 import { formatCurrency } from '@/lib/utils'
@@ -232,20 +232,20 @@ export function ProductDetails({ productId }: ProductDetailsProps) {
               )}
 
               {/* SEO Information */}
-              {(product.metaTitle || product.metaDescription) && (
+              {(product.seoTitle || product.seoDescription) && (
                 <div>
                   <h4 className="mb-2 font-medium">SEO Information</h4>
                   <div className="space-y-2 text-sm">
-                    {product.metaTitle && (
+                    {product.seoTitle && (
                       <div>
-                        <span className="text-muted-foreground">Meta Title:</span>
-                        <p className="mt-1">{product.metaTitle}</p>
+                        <span className="text-muted-foreground">SEO Title:</span>
+                        <p className="mt-1">{product.seoTitle}</p>
                       </div>
                     )}
-                    {product.metaDescription && (
+                    {product.seoDescription && (
                       <div>
-                        <span className="text-muted-foreground">Meta Description:</span>
-                        <p className="mt-1">{product.metaDescription}</p>
+                        <span className="text-muted-foreground">SEO Description:</span>
+                        <p className="mt-1">{product.seoDescription}</p>
                       </div>
                     )}
                   </div>
@@ -374,8 +374,8 @@ export function ProductDetails({ productId }: ProductDetailsProps) {
               </div>
               <Separator />
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Slug:</span>
-                <code className="bg-muted rounded px-1 py-0.5 text-xs">{product.slug}</code>
+                <span className="text-muted-foreground">SKU:</span>
+                <code className="bg-muted rounded px-1 py-0.5 text-xs">{product.sku}</code>
               </div>
             </CardContent>
           </Card>
