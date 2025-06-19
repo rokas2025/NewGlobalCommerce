@@ -51,7 +51,6 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   const createProduct = useCreateProduct()
   const updateProduct = useUpdateProduct()
   const { data: categories } = useCategories()
-  const skuCheckQuery = useSkuCheck(watchSku || '', product?.id)
 
   const isEdit = mode === 'edit'
   const schema = isEdit ? updateProductSchema : createProductSchema
@@ -96,6 +95,9 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
 
   const watchName = form.watch('name')
   const watchSku = form.watch('sku')
+
+  // SKU check hook - must be after watchSku is declared
+  const skuCheckQuery = useSkuCheck(watchSku || '', product?.id)
 
   // Auto-generate slug from name
   useEffect(() => {
