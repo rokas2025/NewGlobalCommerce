@@ -1,12 +1,11 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { ProductEditForm } from '@/components/products/ProductEditForm'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/lib/icons'
-import { ProductEditForm } from '@/components/products/ProductEditForm'
+import { Metadata } from 'next'
+import Link from 'next/link'
 
 interface ProductEditPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function generateMetadata({ params }: ProductEditPageProps): Promise<Metadata> {
@@ -16,13 +15,14 @@ export async function generateMetadata({ params }: ProductEditPageProps): Promis
   }
 }
 
-export default function ProductEditPage({ params }: ProductEditPageProps) {
+export default async function ProductEditPage({ params }: ProductEditPageProps) {
+  const { id } = await params
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={`/products/${params.id}`}>
+            <Link href={`/products/${id}`}>
               <Icons.ArrowLeft className="mr-2 h-4 w-4" />
               Back to Product
             </Link>
@@ -34,7 +34,7 @@ export default function ProductEditPage({ params }: ProductEditPageProps) {
         </div>
       </div>
 
-      <ProductEditForm productId={params.id} />
+      <ProductEditForm productId={id} />
     </div>
   )
 }

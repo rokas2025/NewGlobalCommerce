@@ -2,22 +2,20 @@
 
 import { db } from '../src/lib/db/connection'
 import {
-  users,
   categories,
-  products,
-  productCategories,
-  warehouses,
   inventory,
-  systemSettings,
   languages,
-  activityLogs,
-  type NewUser,
+  products,
+  systemSettings,
+  users,
+  warehouses,
   type NewCategory,
-  type NewProduct,
-  type NewWarehouse,
   type NewInventory,
-  type NewSystemSetting,
   type NewLanguage,
+  type NewProduct,
+  type NewSystemSetting,
+  type NewUser,
+  type NewWarehouse,
 } from '../src/lib/db/schema'
 
 async function seed() {
@@ -258,6 +256,10 @@ async function seed() {
     console.log('📊 Seeding inventory...')
 
     const mainWarehouse = insertedWarehouses[0]
+    if (!mainWarehouse) {
+      throw new Error('Main warehouse not found')
+    }
+
     const inventoryData: NewInventory[] = []
 
     for (const product of insertedProducts) {

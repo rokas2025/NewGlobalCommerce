@@ -1,11 +1,11 @@
-import { Metadata } from 'next'
-import Link from 'next/link'
+import { ProductDetails } from '@/components/products/ProductDetails'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/lib/icons'
-import { ProductDetails } from '@/components/products/ProductDetails'
+import { Metadata } from 'next'
+import Link from 'next/link'
 
 interface ProductPageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -15,7 +15,8 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { id } = await params
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -34,7 +35,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
         <div className="flex items-center space-x-2">
           <Button variant="outline" asChild>
-            <Link href={`/products/${params.id}/edit`}>
+            <Link href={`/products/${id}/edit`}>
               <Icons.Edit className="mr-2 h-4 w-4" />
               Edit Product
             </Link>
@@ -42,7 +43,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
-      <ProductDetails productId={params.id} />
+      <ProductDetails productId={id} />
     </div>
   )
 }

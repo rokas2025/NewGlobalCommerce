@@ -1,19 +1,19 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 
 import {
   authService,
-  type AuthUser,
   type AuthSession,
+  type AuthUser,
+  type ResetPasswordData,
   type SignInData,
   type SignUpData,
-  type ResetPasswordData,
   type UpdatePasswordData,
   type UpdateProfileData,
-} from '@/lib/auth/auth'
+} from '@/lib/auth/client'
 import { supabaseConfig, type AuthEvent } from '@/lib/supabase/config'
 
 // Auth query keys

@@ -1,16 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -19,11 +16,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Icons } from '@/lib/icons'
 
-import { authService } from '@/lib/auth/auth'
-import { signInSchema, type SignInFormData } from '@/lib/validations/auth'
+import { authService } from '@/lib/auth/client'
 import { supabaseConfig } from '@/lib/supabase/config'
+import { signInSchema, type SignInFormData } from '@/lib/validations/auth'
 
 export function LoginForm() {
   const router = useRouter()

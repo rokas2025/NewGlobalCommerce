@@ -6,27 +6,27 @@ export const supabaseConfig = {
       google: false, // Can be enabled later
       github: false, // Can be enabled later
     },
-    
+
     // Session configuration
     session: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
     },
-    
+
     // Email configuration
     email: {
       confirmSignUp: true,
       resetPassword: true,
     },
-    
+
     // Security settings
     security: {
       minPasswordLength: 8,
       requireEmailConfirmation: true,
       sessionTimeout: 60 * 60 * 24 * 7, // 7 days in seconds
     },
-    
+
     // Redirect URLs
     redirectUrls: {
       signIn: '/dashboard',
@@ -35,7 +35,7 @@ export const supabaseConfig = {
       passwordReset: '/auth/reset-password',
     },
   },
-  
+
   // Database configuration
   database: {
     schema: 'public',
@@ -60,15 +60,14 @@ export const authErrors = {
 // User roles enum
 export enum UserRole {
   ADMIN = 'admin',
-  MANAGER = 'manager', 
+  MANAGER = 'manager',
   CUSTOMER = 'customer',
 }
 
 // Auth event types
-export type AuthEvent = 
+export type AuthEvent =
   | 'SIGNED_IN'
   | 'SIGNED_OUT'
   | 'TOKEN_REFRESHED'
   | 'USER_UPDATED'
   | 'PASSWORD_RECOVERY'
-} 

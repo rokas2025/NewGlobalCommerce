@@ -10,7 +10,6 @@ export {
   ArrowLeft,
   ArrowRight,
   Banknote,
-  Brain,
   // Dashboard & Analytics
   BarChart3,
   // Communication & Notifications
@@ -18,6 +17,7 @@ export {
   BellRing,
   BoxSelect,
   Boxes,
+  Brain,
   // Time & Calendar
   Calendar,
   // Status & Feedback
@@ -172,3 +172,22 @@ export const iconVariants = {
 
 export type IconSize = keyof typeof iconSizes
 export type IconVariant = keyof typeof iconVariants
+
+// Icons object for component usage
+import * as LucideIcons from 'lucide-react'
+
+export const Icons = {
+  ...LucideIcons,
+  // Add missing icons that might be used
+  ArrowUpDown: LucideIcons.ArrowUpDown,
+  ArrowUp: LucideIcons.ArrowUp,
+  ArrowDown: LucideIcons.ArrowDown,
+  Trash: LucideIcons.Trash2,
+  Wifi: LucideIcons.Wifi,
+  Bug: LucideIcons.Bug,
+  Lightbulb: LucideIcons.Lightbulb,
+  RotateCcw: LucideIcons.RotateCcw,
+  MessageCircle: LucideIcons.MessageCircle,
+  Github: LucideIcons.Github,
+  Play: LucideIcons.Play,
+}
