@@ -1,11 +1,11 @@
 'use client'
 
-import React, { ReactNode } from 'react'
-import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Icons } from '@/lib/icons'
 import { handleAuthError, type AuthErrorDetails } from '@/lib/auth/error-handler'
+import { Icons } from '@/lib/icons'
+import React, { ReactNode } from 'react'
 
 interface AuthErrorBoundaryState {
   hasError: boolean
@@ -71,7 +71,7 @@ export class AuthErrorBoundary extends React.Component<
     window.location.href = '/'
   }
 
-  render() {
+  override render() {
     if (this.state.hasError && this.state.errorDetails) {
       const { errorDetails } = this.state
 
