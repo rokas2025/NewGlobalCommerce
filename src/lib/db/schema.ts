@@ -126,14 +126,14 @@ export const userSessions = pgTable(
 // PRODUCT MANAGEMENT TABLES
 // =============================================================================
 
-export const categories = pgTable(
+export const categories: any = pgTable(
   'categories',
   {
     id: uuid('id').primaryKey().defaultRandom(),
     name: text('name').notNull(),
     slug: text('slug').notNull().unique(),
     description: text('description'),
-    parentId: uuid('parent_id').references(() => categories.id),
+    parentId: uuid('parent_id').references((): any => categories.id),
     imageUrl: text('image_url'),
     isActive: boolean('is_active').default(true),
     sortOrder: integer('sort_order').default(0),

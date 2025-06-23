@@ -6,8 +6,13 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { useCategories, useCreateProduct, useSkuCheck, useUpdateProduct } from '@/hooks/useProducts'
-import { createProductSchema, updateProductSchema } from '@/lib/validations/products'
-import { ProductStatus, ProductVisibility, type Product } from '@/types/products'
+import {
+  createProductSchema,
+  updateProductSchema,
+  type CreateProductFormData,
+  type UpdateProductFormData,
+} from '@/lib/validations/products'
+import { ProductStatus, ProductVisibility, type ProductWithCategories } from '@/types/products'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -33,10 +38,10 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 
 import { Icons } from '@/lib/icons'
-import { cn, slugify } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
 interface ProductFormProps {
-  product?: Product
+  product?: ProductWithCategories
   mode?: 'create' | 'edit'
 }
 
@@ -46,7 +51,6 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   const [tags, setTags] = useState<string[]>(product?.tags || [])
   const [newTag, setNewTag] = useState('')
   const [skuError, setSkuError] = useState<string | null>(null)
-  const [generateSlug, setGenerateSlug] = useState(true)
 
   const createProduct = useCreateProduct()
   const updateProduct = useUpdateProduct()
@@ -55,7 +59,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   const isEdit = mode === 'edit'
   const schema = isEdit ? updateProductSchema : createProductSchema
 
-  const form = useForm<CreateProductData | UpdateProductData>({
+  const form = useForm<CreateProductFormData | UpdateProductFormData>({
     resolver: zodResolver(schema),
     defaultValues:
       isEdit && product
@@ -93,19 +97,10 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
           },
   })
 
-  const watchName = form.watch('name')
   const watchSku = form.watch('sku')
 
   // SKU check hook - must be after watchSku is declared
   const skuCheckQuery = useSkuCheck(watchSku || '', product?.id)
-
-  // Auto-generate slug from name
-  useEffect(() => {
-    if (generateSlug && watchName && !isEdit) {
-      const slug = slugify(watchName)
-      form.setValue('slug', slug)
-    }
-  }, [watchName, generateSlug, form, isEdit])
 
   // SKU validation
   useEffect(() => {
@@ -138,19 +133,35 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   }
 
   // Handle form submission
-  const onSubmit = async (data: CreateProductData | UpdateProductData) => {
+  const onSubmit = async (data: CreateProductFormData | UpdateProductFormData) => {
     if (skuError) return
 
     setIsSubmitting(true)
     try {
+      // Transform null values to undefined for API compatibility
+      const transformedData = {
+        ...data,
+        description: data.description || undefined,
+        shortDescription: data.shortDescription || undefined,
+        barcode: data.barcode || undefined,
+        costPrice: data.costPrice || undefined,
+        compareAtPrice: data.compareAtPrice || undefined,
+        weight: data.weight || undefined,
+        dimensions: data.dimensions || undefined,
+        featuredImageUrl: data.featuredImageUrl || undefined,
+        seoTitle: data.seoTitle || undefined,
+        seoDescription: data.seoDescription || undefined,
+        primaryCategoryId: data.primaryCategoryId || undefined,
+      } as any
+
       if (isEdit && product) {
         await updateProduct.mutateAsync({
           id: product.id,
-          data: data as UpdateProductData,
+          data: transformedData as UpdateProductFormData,
         })
         router.push(`/products/${product.id}`)
       } else {
-        const result = await createProduct.mutateAsync(data as CreateProductData)
+        const result = await createProduct.mutateAsync(transformedData as CreateProductFormData)
         router.push(`/products/${result.id}`)
       }
     } catch (error) {
@@ -182,37 +193,6 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                       <FormControl>
                         <Input placeholder="Enter product name" {...field} />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>URL Slug</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <Input
-                            placeholder="product-url-slug"
-                            {...field}
-                            disabled={generateSlug && !isEdit}
-                          />
-                          {!isEdit && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setGenerateSlug(!generateSlug)}
-                            >
-                              {generateSlug ? 'Manual' : 'Auto'}
-                            </Button>
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormDescription>URL-friendly version of the product name</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -442,7 +422,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
               <CardContent className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="metaTitle"
+                  name="seoTitle"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Meta Title</FormLabel>
@@ -459,7 +439,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
 
                 <FormField
                   control={form.control}
-                  name="metaDescription"
+                  name="seoDescription"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Meta Description</FormLabel>
@@ -599,7 +579,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                         </Select>
                       </FormControl>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {field.value?.map(categoryId => {
+                        {field.value?.map((categoryId: string) => {
                           const category = categories?.find(c => c.id === categoryId)
                           return category ? (
                             <Badge key={categoryId} variant="secondary">
@@ -610,7 +590,9 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                                 size="sm"
                                 className="ml-2 h-4 w-4 p-0"
                                 onClick={() => {
-                                  field.onChange(field.value?.filter(id => id !== categoryId))
+                                  field.onChange(
+                                    field.value?.filter((id: string) => id !== categoryId)
+                                  )
                                 }}
                               >
                                 <Icons.X className="h-3 w-3" />

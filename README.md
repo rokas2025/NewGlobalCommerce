@@ -71,6 +71,49 @@ A modern, AI-powered e-commerce platform built with Next.js 14, TypeScript, and 
 
 Open [http://localhost:3000](http://localhost:3000) to see the application.
 
+### 🔑 Default Login Credentials
+
+The database is seeded with these demo users:
+
+**Admin User**
+- Email: `admin@globalcommerce.com` 
+- Password: `admin123`
+- Role: Full admin access
+
+**Manager User**
+- Email: `manager@globalcommerce.com`
+- Password: `manager123` 
+- Role: Product management
+
+**Customer User**
+- Email: `john.doe@example.com`
+- Password: `customer123`
+- Role: Limited customer access
+
+### 💻 Windows PowerShell Commands
+
+This project includes PowerShell-specific commands for Windows users:
+
+```powershell
+# Check environment files
+Get-ChildItem -Name "*.env*"
+
+# Start development server
+npm run dev
+
+# Database operations
+npm run db:generate
+npm run db:migrate  
+npm run db:seed
+
+# Code quality checks
+npm run type-check
+npm run lint
+npm run format
+```
+
+📖 **See [LOCAL_DEVELOPMENT_GUIDE.md](LOCAL_DEVELOPMENT_GUIDE.md) for complete setup instructions.**
+
 ## 📁 Project Structure
 
 ```

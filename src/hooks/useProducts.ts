@@ -1,19 +1,19 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import type {
-  Product,
-  ProductWithCategories,
-  ProductListResponse,
-  CreateProductData,
-  UpdateProductData,
-  ProductFilters,
-  ProductAnalytics,
   Category,
   CategoryWithChildren,
-  ProductListItem,
+  CreateProductData,
+  Product,
+  ProductAnalytics,
+  ProductFilters,
+  ProductListResponse,
+  ProductWithCategories,
+  UpdateProductData,
 } from '@/types/products'
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
 // API functions (these would be implemented in a separate api layer)
 const productApi = {

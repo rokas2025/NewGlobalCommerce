@@ -1,5 +1,5 @@
+import { ProductSortField, ProductStatus, ProductVisibility } from '@/types/products'
 import { z } from 'zod'
-import { ProductStatus, ProductVisibility, ProductSortField } from '@/types/products'
 
 // Base validation schemas
 export const productStatusSchema = z.nativeEnum(ProductStatus, {
@@ -28,10 +28,10 @@ export const priceSchema = z
   .min(0, 'Price must be 0 or greater')
   .max(999999.99, 'Price must be less than 1,000,000')
   .refine(val => Number.isFinite(val), 'Price must be a valid number')
-  .refine(
-    val => val.toString().split('.')[1]?.length <= 2,
-    'Price can have at most 2 decimal places'
-  )
+  .refine(val => {
+    const decimals = val.toString().split('.')[1]
+    return !decimals || decimals.length <= 2
+  }, 'Price can have at most 2 decimal places')
 
 // Optional price validation
 export const optionalPriceSchema = z
@@ -39,10 +39,10 @@ export const optionalPriceSchema = z
   .min(0, 'Price must be 0 or greater')
   .max(999999.99, 'Price must be less than 1,000,000')
   .refine(val => Number.isFinite(val), 'Price must be a valid number')
-  .refine(
-    val => val.toString().split('.')[1]?.length <= 2,
-    'Price can have at most 2 decimal places'
-  )
+  .refine(val => {
+    const decimals = val.toString().split('.')[1]
+    return !decimals || decimals.length <= 2
+  }, 'Price can have at most 2 decimal places')
   .optional()
   .nullable()
 
@@ -96,67 +96,69 @@ export const galleryImagesSchema = z
   .optional()
   .default([])
 
-// Product creation schema
-export const createProductSchema = z
-  .object({
-    name: z
-      .string()
-      .min(1, 'Product name is required')
-      .max(200, 'Product name must be 200 characters or less')
-      .trim(),
+// Base product schema without refinements
+const baseProductSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Product name is required')
+    .max(200, 'Product name must be 200 characters or less')
+    .trim(),
 
-    description: z
-      .string()
-      .max(5000, 'Description must be 5000 characters or less')
-      .optional()
-      .nullable(),
+  description: z
+    .string()
+    .max(5000, 'Description must be 5000 characters or less')
+    .optional()
+    .nullable(),
 
-    shortDescription: z
-      .string()
-      .max(500, 'Short description must be 500 characters or less')
-      .optional()
-      .nullable(),
+  shortDescription: z
+    .string()
+    .max(500, 'Short description must be 500 characters or less')
+    .optional()
+    .nullable(),
 
-    sku: skuSchema,
+  sku: skuSchema,
 
-    barcode: z.string().max(50, 'Barcode must be 50 characters or less').optional().nullable(),
+  barcode: z.string().max(50, 'Barcode must be 50 characters or less').optional().nullable(),
 
-    price: priceSchema,
+  price: priceSchema,
 
-    costPrice: optionalPriceSchema,
+  costPrice: optionalPriceSchema,
 
-    compareAtPrice: optionalPriceSchema,
+  compareAtPrice: optionalPriceSchema,
 
-    weight: weightSchema,
+  weight: weightSchema,
 
-    dimensions: dimensionsSchema,
+  dimensions: dimensionsSchema,
 
-    status: productStatusSchema.default(ProductStatus.DRAFT),
+  status: productStatusSchema.default(ProductStatus.DRAFT),
 
-    visibility: productVisibilitySchema.default(ProductVisibility.PRIVATE),
+  visibility: productVisibilitySchema.default(ProductVisibility.PRIVATE),
 
-    featuredImageUrl: imageUrlSchema,
+  featuredImageUrl: imageUrlSchema,
 
-    galleryImages: galleryImagesSchema,
+  galleryImages: galleryImagesSchema,
 
-    seoTitle: z.string().max(60, 'SEO title must be 60 characters or less').optional().nullable(),
+  seoTitle: z.string().max(60, 'SEO title must be 60 characters or less').optional().nullable(),
 
-    seoDescription: z
-      .string()
-      .max(160, 'SEO description must be 160 characters or less')
-      .optional()
-      .nullable(),
+  seoDescription: z
+    .string()
+    .max(160, 'SEO description must be 160 characters or less')
+    .optional()
+    .nullable(),
 
-    tags: tagsSchema,
+  tags: tagsSchema,
 
-    categoryIds: z
-      .array(z.string().uuid('Invalid category ID'))
-      .max(10, 'Maximum 10 categories allowed')
-      .optional()
-      .default([]),
+  categoryIds: z
+    .array(z.string().uuid('Invalid category ID'))
+    .max(10, 'Maximum 10 categories allowed')
+    .optional()
+    .default([]),
 
-    primaryCategoryId: z.string().uuid('Invalid primary category ID').optional().nullable(),
-  })
+  primaryCategoryId: z.string().uuid('Invalid primary category ID').optional().nullable(),
+})
+
+// Product creation schema with refinements
+export const createProductSchema = baseProductSchema
   .refine(
     data => {
       // If compareAtPrice is set, it should be greater than price
@@ -202,27 +204,29 @@ export const createProductSchema = z
   )
 
 // Product update schema (all fields optional except ID)
-export const updateProductSchema = createProductSchema.partial().extend({
+export const updateProductSchema = baseProductSchema.partial().extend({
   id: z.string().uuid('Invalid product ID'),
 })
 
-// Product filters schema
-export const productFiltersSchema = z
-  .object({
-    search: z.string().max(100).optional(),
-    status: z.array(productStatusSchema).optional(),
-    visibility: z.array(productVisibilitySchema).optional(),
-    categoryIds: z.array(z.string().uuid()).optional(),
-    priceMin: z.number().min(0).optional(),
-    priceMax: z.number().min(0).optional(),
-    stockMin: z.number().min(0).optional(),
-    stockMax: z.number().min(0).optional(),
-    tags: z.array(z.string()).optional(),
-    createdAfter: z.date().optional(),
-    createdBefore: z.date().optional(),
-    sortBy: productSortFieldSchema.optional().default(ProductSortField.CREATED_AT),
-    sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
-  })
+// Base product filters schema
+const baseProductFiltersSchema = z.object({
+  search: z.string().max(100).optional(),
+  status: z.array(productStatusSchema).optional(),
+  visibility: z.array(productVisibilitySchema).optional(),
+  categoryIds: z.array(z.string().uuid()).optional(),
+  priceMin: z.number().min(0).optional(),
+  priceMax: z.number().min(0).optional(),
+  stockMin: z.number().min(0).optional(),
+  stockMax: z.number().min(0).optional(),
+  tags: z.array(z.string()).optional(),
+  createdAfter: z.date().optional(),
+  createdBefore: z.date().optional(),
+  sortBy: productSortFieldSchema.optional().default(ProductSortField.CREATED_AT),
+  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+})
+
+// Product filters schema with validation
+export const productFiltersSchema = baseProductFiltersSchema
   .refine(
     data => {
       // priceMax should be greater than priceMin
@@ -270,7 +274,7 @@ export const paginationSchema = z.object({
 })
 
 // Product list query schema
-export const productListQuerySchema = productFiltersSchema.merge(paginationSchema)
+export const productListQuerySchema = baseProductFiltersSchema.merge(paginationSchema)
 
 // Category schemas
 export const createCategorySchema = z.object({

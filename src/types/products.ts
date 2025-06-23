@@ -1,5 +1,3 @@
-import { z } from 'zod'
-
 // Base types from database schema
 export interface Product {
   id: string
@@ -128,24 +126,24 @@ export interface ProductListItem {
 // Form types
 export interface CreateProductData {
   name: string
-  description?: string
-  shortDescription?: string
+  description?: string | null
+  shortDescription?: string | null
   sku: string
-  barcode?: string
+  barcode?: string | null
   price: number
-  costPrice?: number
-  compareAtPrice?: number
-  weight?: number
-  dimensions?: string
+  costPrice?: number | null
+  compareAtPrice?: number | null
+  weight?: number | null
+  dimensions?: string | null
   status: ProductStatus
   visibility: ProductVisibility
-  featuredImageUrl?: string
+  featuredImageUrl?: string | null
   galleryImages?: string[]
-  seoTitle?: string
-  seoDescription?: string
+  seoTitle?: string | null
+  seoDescription?: string | null
   tags?: string[]
   categoryIds?: string[]
-  primaryCategoryId?: string
+  primaryCategoryId?: string | null
 }
 
 export interface UpdateProductData extends Partial<CreateProductData> {

@@ -32,8 +32,8 @@ export interface UseAuthReturn {
   isAuthenticated: boolean
 
   // Actions
-  signIn: (data: SignInData) => Promise<void>
-  signUp: (data: SignUpData) => Promise<void>
+  signIn: (data: SignInData) => Promise<any>
+  signUp: (data: SignUpData) => Promise<any>
   signOut: () => Promise<void>
   resetPassword: (data: ResetPasswordData) => Promise<void>
   updatePassword: (data: UpdatePasswordData) => Promise<void>

@@ -240,13 +240,4 @@ export class AuthService {
 // Export singleton instance
 export const authService = new AuthService()
 
-// Export types
-export type {
-  AuthSession,
-  AuthUser,
-  ResetPasswordData,
-  SignInData,
-  SignUpData,
-  UpdatePasswordData,
-  UpdateProfileData,
-}
+// Types are already exported above, no need to re-export
