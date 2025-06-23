@@ -57,45 +57,65 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   const { data: categories } = useCategories()
 
   const isEdit = mode === 'edit'
-  const schema = isEdit ? updateProductSchema : createProductSchema
 
-  const form = useForm<CreateProductFormData | UpdateProductFormData>({
-    resolver: zodResolver(schema),
-    defaultValues:
-      isEdit && product
-        ? {
-            name: product.name,
-            description: product.description || '',
-            shortDescription: product.shortDescription || '',
-            sku: product.sku,
-            price: product.price,
-            compareAtPrice: product.compareAtPrice || undefined,
-            costPrice: product.costPrice || undefined,
-            status: product.status,
-            visibility: product.visibility,
-            featuredImageUrl: product.featuredImageUrl || '',
-            weight: product.weight || undefined,
-            dimensions: product.dimensions || undefined,
-            seoTitle: product.seoTitle || '',
-            seoDescription: product.seoDescription || '',
-            tags: product.tags || [],
-            categoryIds: product.categories?.map(c => c.id) || [],
-          }
-        : {
-            name: '',
-            description: '',
-            shortDescription: '',
-            sku: '',
-            price: 0,
-            status: ProductStatus.DRAFT,
-            visibility: ProductVisibility.PRIVATE,
-            featuredImageUrl: '',
-            seoTitle: '',
-            seoDescription: '',
-            tags: [],
-            categoryIds: [],
-          },
+  // Create separate form instances for create and edit modes
+  const createForm = useForm({
+    resolver: zodResolver(createProductSchema) as any,
+    defaultValues: {
+      name: '',
+      description: null,
+      shortDescription: null,
+      sku: '',
+      barcode: null,
+      price: 0,
+      costPrice: null,
+      compareAtPrice: null,
+      weight: null,
+      dimensions: null,
+      status: ProductStatus.DRAFT,
+      visibility: ProductVisibility.PRIVATE,
+      featuredImageUrl: null,
+      galleryImages: [],
+      seoTitle: null,
+      seoDescription: null,
+      tags: [],
+      categoryIds: [],
+      primaryCategoryId: null,
+    },
   })
+
+  const editForm = useForm({
+    resolver: zodResolver(updateProductSchema) as any,
+    defaultValues: product
+      ? {
+          id: product.id,
+          name: product.name,
+          description: product.description || null,
+          shortDescription: product.shortDescription || null,
+          sku: product.sku,
+          barcode: product.barcode || null,
+          price: product.price,
+          compareAtPrice: product.compareAtPrice || null,
+          costPrice: product.costPrice || null,
+          status: product.status,
+          visibility: product.visibility,
+          featuredImageUrl: product.featuredImageUrl || null,
+          galleryImages: product.galleryImages || [],
+          weight: product.weight || null,
+          dimensions: product.dimensions || null,
+          seoTitle: product.seoTitle || null,
+          seoDescription: product.seoDescription || null,
+          tags: product.tags || [],
+          categoryIds: product.categories?.map(c => c.id) || [],
+          primaryCategoryId: product.primaryCategory?.id || null,
+        }
+      : {
+          id: '',
+        },
+  })
+
+  // Use the appropriate form based on mode
+  const form = isEdit ? editForm : createForm
 
   const watchSku = form.watch('sku')
 
@@ -281,7 +301,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                         <FormLabel>Price *</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
+                            <span className="text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2">
                               $
                             </span>
                             <Input
@@ -308,7 +328,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                         <FormLabel>Compare At Price</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
+                            <span className="text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2">
                               $
                             </span>
                             <Input
@@ -338,7 +358,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                         <FormLabel>Cost Price</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
+                            <span className="text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2">
                               $
                             </span>
                             <Input
