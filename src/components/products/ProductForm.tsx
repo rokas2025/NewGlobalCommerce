@@ -58,64 +58,57 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
 
   const isEdit = mode === 'edit'
 
-  // Create separate form instances for create and edit modes
-  const createForm = useForm({
-    resolver: zodResolver(createProductSchema) as any,
-    defaultValues: {
-      name: '',
-      description: null,
-      shortDescription: null,
-      sku: '',
-      barcode: null,
-      price: 0,
-      costPrice: null,
-      compareAtPrice: null,
-      weight: null,
-      dimensions: null,
-      status: ProductStatus.DRAFT,
-      visibility: ProductVisibility.PRIVATE,
-      featuredImageUrl: null,
-      galleryImages: [],
-      seoTitle: null,
-      seoDescription: null,
-      tags: [],
-      categoryIds: [],
-      primaryCategoryId: null,
-    },
-  })
+  // Create a single form that handles both create and edit modes
+  type FormData = CreateProductFormData & { id?: string }
 
-  const editForm = useForm({
-    resolver: zodResolver(updateProductSchema) as any,
-    defaultValues: product
-      ? {
-          id: product.id,
-          name: product.name,
-          description: product.description || null,
-          shortDescription: product.shortDescription || null,
-          sku: product.sku,
-          barcode: product.barcode || null,
-          price: product.price,
-          compareAtPrice: product.compareAtPrice || null,
-          costPrice: product.costPrice || null,
-          status: product.status,
-          visibility: product.visibility,
-          featuredImageUrl: product.featuredImageUrl || null,
-          galleryImages: product.galleryImages || [],
-          weight: product.weight || null,
-          dimensions: product.dimensions || null,
-          seoTitle: product.seoTitle || null,
-          seoDescription: product.seoDescription || null,
-          tags: product.tags || [],
-          categoryIds: product.categories?.map(c => c.id) || [],
-          primaryCategoryId: product.primaryCategory?.id || null,
-        }
-      : {
-          id: '',
-        },
+  const form = useForm<FormData>({
+    resolver: zodResolver(isEdit ? updateProductSchema : createProductSchema) as any,
+    defaultValues:
+      isEdit && product
+        ? {
+            id: product.id,
+            name: product.name,
+            description: product.description || null,
+            shortDescription: product.shortDescription || null,
+            sku: product.sku,
+            barcode: product.barcode || null,
+            price: product.price,
+            compareAtPrice: product.compareAtPrice || null,
+            costPrice: product.costPrice || null,
+            status: product.status,
+            visibility: product.visibility,
+            featuredImageUrl: product.featuredImageUrl || null,
+            galleryImages: product.galleryImages || [],
+            weight: product.weight || null,
+            dimensions: product.dimensions || null,
+            seoTitle: product.seoTitle || null,
+            seoDescription: product.seoDescription || null,
+            tags: product.tags || [],
+            categoryIds: product.categories?.map(c => c.id) || [],
+            primaryCategoryId: product.primaryCategory?.id || null,
+          }
+        : {
+            name: '',
+            description: null,
+            shortDescription: null,
+            sku: '',
+            barcode: null,
+            price: 0,
+            costPrice: null,
+            compareAtPrice: null,
+            weight: null,
+            dimensions: null,
+            status: ProductStatus.DRAFT,
+            visibility: ProductVisibility.PRIVATE,
+            featuredImageUrl: null,
+            galleryImages: [],
+            seoTitle: null,
+            seoDescription: null,
+            tags: [],
+            categoryIds: [],
+            primaryCategoryId: null,
+          },
   })
-
-  // Use the appropriate form based on mode
-  const form = isEdit ? editForm : createForm
 
   const watchSku = form.watch('sku')
 
@@ -153,7 +146,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   }
 
   // Handle form submission
-  const onSubmit = async (data: CreateProductFormData | UpdateProductFormData) => {
+  const onSubmit = async (data: FormData) => {
     if (skuError) return
 
     setIsSubmitting(true)
@@ -172,7 +165,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
         seoTitle: data.seoTitle || undefined,
         seoDescription: data.seoDescription || undefined,
         primaryCategoryId: data.primaryCategoryId || undefined,
-      } as any
+      }
 
       if (isEdit && product) {
         await updateProduct.mutateAsync({
