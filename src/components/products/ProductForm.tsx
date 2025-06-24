@@ -8,7 +8,6 @@ import { useForm } from 'react-hook-form'
 import { useCategories, useCreateProduct, useSkuCheck, useUpdateProduct } from '@/hooks/useProducts'
 import {
   createProductSchema,
-  updateProductSchema,
   type CreateProductFormData,
   type UpdateProductFormData,
 } from '@/lib/validations/products'
@@ -58,15 +57,12 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
 
   const isEdit = mode === 'edit'
 
-  // Create a single form that handles both create and edit modes
-  type FormData = CreateProductFormData & { id?: string }
-
-  const form = useForm<FormData>({
-    resolver: zodResolver(isEdit ? updateProductSchema : createProductSchema) as any,
+  // Use createProductSchema as base and handle edit mode in submission
+  const form = useForm({
+    resolver: zodResolver(createProductSchema),
     defaultValues:
       isEdit && product
         ? {
-            id: product.id,
             name: product.name,
             description: product.description || null,
             shortDescription: product.shortDescription || null,
@@ -146,7 +142,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
   }
 
   // Handle form submission
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: CreateProductFormData) => {
     if (skuError) return
 
     setIsSubmitting(true)
@@ -168,9 +164,15 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
       }
 
       if (isEdit && product) {
+        // For edit mode, add the ID and cast to UpdateProductFormData
+        const updateData = {
+          id: product.id,
+          ...transformedData,
+        } as UpdateProductFormData
+
         await updateProduct.mutateAsync({
           id: product.id,
-          data: transformedData as UpdateProductFormData,
+          data: updateData,
         })
         router.push(`/products/${product.id}`)
       } else {
