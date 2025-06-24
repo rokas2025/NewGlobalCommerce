@@ -225,6 +225,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                           className="resize-none"
                           rows={3}
                           {...field}
+                          value={field.value || ''}
                         />
                       </FormControl>
                       <FormDescription>Brief description shown in product listings</FormDescription>
@@ -245,6 +246,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                           className="resize-none"
                           rows={6}
                           {...field}
+                          value={field.value || ''}
                         />
                       </FormControl>
                       <FormDescription>Detailed description shown on product pages</FormDescription>
@@ -282,6 +284,21 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                         </Alert>
                       )}
                       <FormDescription>Unique identifier for inventory tracking</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="barcode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Barcode</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Product barcode" {...field} value={field.value || ''} />
+                      </FormControl>
+                      <FormDescription>UPC, EAN, or other barcode format</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -416,10 +433,14 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                     <FormItem>
                       <FormLabel>Dimensions (L x W x H cm)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 30 x 20 x 10" {...field} />
+                        <Input
+                          placeholder="e.g., 30 x 20 x 10"
+                          {...field}
+                          value={field.value || ''}
+                        />
                       </FormControl>
                       <FormDescription>
-                        Dimensions in centimeters for shipping calculations
+                        Product dimensions for shipping calculations
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -442,7 +463,11 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                     <FormItem>
                       <FormLabel>Meta Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="SEO title for search engines" {...field} />
+                        <Input
+                          placeholder="SEO title for search engines"
+                          {...field}
+                          value={field.value || ''}
+                        />
                       </FormControl>
                       <FormDescription>
                         Title displayed in search engine results (60 chars max)
@@ -464,6 +489,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                           className="resize-none"
                           rows={3}
                           {...field}
+                          value={field.value || ''}
                         />
                       </FormControl>
                       <FormDescription>
@@ -549,7 +575,11 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                     <FormItem>
                       <FormLabel>Image URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
+                        <Input
+                          placeholder="https://example.com/image.jpg"
+                          {...field}
+                          value={field.value || ''}
+                        />
                       </FormControl>
                       <FormDescription>URL of the product's featured image</FormDescription>
                       <FormMessage />
