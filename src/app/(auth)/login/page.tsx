@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ShoppingBag, Eye, EyeOff } from '@/lib/icons'
+import { Eye, EyeOff, ShoppingBag } from '@/lib/icons'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -24,7 +24,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-muted/50 flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="mb-4 flex items-center justify-center">
@@ -60,7 +60,7 @@ export default function LoginPage() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -78,18 +78,19 @@ export default function LoginPage() {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background text-muted-foreground px-2">Demo Mode</span>
+                <span className="bg-background px-2 text-muted-foreground">Demo Mode</span>
               </div>
             </div>
-            <p className="text-muted-foreground mt-4 text-sm">
+            <p className="mt-4 text-sm text-muted-foreground">
               This is a demo. Any credentials will work!
             </p>
             <Button
-              variant="outline"
-              className="mt-2 w-full"
+              variant="secondary"
+              size="lg"
+              className="mt-4 w-full bg-blue-600 font-semibold text-white hover:bg-blue-700"
               onClick={() => router.push('/dashboard')}
             >
-              Skip to Dashboard
+              🚀 Skip to Dashboard (Demo)
             </Button>
           </div>
         </CardContent>

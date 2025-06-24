@@ -1,9 +1,10 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { authMiddleware } from '@/lib/auth/middleware'
 
 export async function middleware(request: NextRequest) {
-  // First, handle Supabase session refresh
+  // TEMPORARILY DISABLED FOR DEMO - Allow direct access to dashboard
+  // Skip auth middleware and just handle Supabase session refresh
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -32,15 +33,12 @@ export async function middleware(request: NextRequest) {
   // Refresh session if expired - required for Server Components
   await supabase.auth.getUser()
 
-  // Apply authentication middleware for route protection
-  const authResponse = await authMiddleware(request)
+  // DEMO MODE: Skip authentication middleware
+  // const authResponse = await authMiddleware(request)
+  // if (authResponse && authResponse.status >= 300 && authResponse.status < 400) {
+  //   return authResponse
+  // }
 
-  // If auth middleware returns a redirect, use that
-  if (authResponse && authResponse.status >= 300 && authResponse.status < 400) {
-    return authResponse
-  }
-
-  // Otherwise, return the supabase response with refreshed session
   return supabaseResponse
 }
 
