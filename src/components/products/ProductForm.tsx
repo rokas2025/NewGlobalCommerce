@@ -350,6 +350,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                               placeholder="0.00"
                               className="pl-8"
                               {...field}
+                              value={field.value ?? ''}
                               onChange={e =>
                                 field.onChange(parseFloat(e.target.value) || undefined)
                               }
@@ -380,6 +381,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                               placeholder="0.00"
                               className="pl-8"
                               {...field}
+                              value={field.value ?? ''}
                               onChange={e =>
                                 field.onChange(parseFloat(e.target.value) || undefined)
                               }
@@ -415,6 +417,7 @@ export function ProductForm({ product, mode = 'create' }: ProductFormProps) {
                           min="0"
                           placeholder="0.00"
                           {...field}
+                          value={field.value ?? ''}
                           onChange={e => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
