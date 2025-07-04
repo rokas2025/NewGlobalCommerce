@@ -244,6 +244,8 @@ export const amazonProductData = pgTable(
     variationTheme: text('variation_theme'), // Color, Size, etc
 
     // Basic product info
+    itemName: text('item_name'),
+    productDescription: text('product_description'),
     feedProductType: text('feed_product_type'),
     brandName: text('brand_name'),
     manufacturer: text('manufacturer'),
@@ -350,6 +352,17 @@ export const amazonProductData = pgTable(
 
     // Color mapping
     colorMap: text('color_map'),
+
+    // Image fields
+    mainImageUrl: text('main_image_url'),
+    otherImageUrl1: text('other_image_url1'),
+    otherImageUrl2: text('other_image_url2'),
+    otherImageUrl3: text('other_image_url3'),
+    otherImageUrl4: text('other_image_url4'),
+    otherImageUrl5: text('other_image_url5'),
+    otherImageUrl6: text('other_image_url6'),
+    otherImageUrl7: text('other_image_url7'),
+    otherImageUrl8: text('other_image_url8'),
 
     // Existing fields
     bulletPoints: text('bullet_points').array(),

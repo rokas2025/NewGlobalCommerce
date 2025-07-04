@@ -10,12 +10,10 @@ const sampleAmazonProducts = [
     productDescription:
       'Professional grade drill brush attachment set for deep cleaning. Includes 3 different brush heads for various cleaning tasks.',
     feedProductType: 'Tools',
-    browseNodes: '228013,2244166011,256798011',
+    browseNodes: ['228013', '2244166011', '256798011'], // Array of strings
     mainImageUrl: 'https://m.media-amazon.com/images/I/71ABC123def.jpg',
-    otherImageUrls: [
-      'https://m.media-amazon.com/images/I/71DEF456ghi.jpg',
-      'https://m.media-amazon.com/images/I/71GHI789jkl.jpg',
-    ],
+    otherImageUrl1: 'https://m.media-amazon.com/images/I/71DEF456ghi.jpg',
+    otherImageUrl2: 'https://m.media-amazon.com/images/I/71GHI789jkl.jpg',
     bulletPoints: [
       'Professional grade drill brush attachment set',
       'Includes 3 different brush heads',
@@ -25,12 +23,14 @@ const sampleAmazonProducts = [
     ],
     genericKeywords:
       'drill brush, cleaning brush, power scrubber, bathroom cleaner, kitchen cleaner',
-    itemWeight: 0.5,
-    itemWeightUnit: 'pounds',
-    itemLength: 6.0,
-    itemWidth: 4.0,
-    itemHeight: 2.0,
-    itemDimensionsUnit: 'inches',
+    itemWeight: '0.5',
+    itemWeightUnitOfMeasure: 'pounds',
+    itemLength: '6.0',
+    itemWidth: '4.0',
+    itemHeight: '2.0',
+    itemLengthUnitOfMeasure: 'inches',
+    itemWidthUnitOfMeasure: 'inches',
+    itemHeightUnitOfMeasure: 'inches',
     listingStatus: 'active',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -42,9 +42,9 @@ const sampleAmazonProducts = [
     productDescription:
       'Heavy duty 5-inch drill brush for tough cleaning jobs. Ideal for large surface areas and stubborn stains.',
     feedProductType: 'Tools',
-    browseNodes: '228013,2244166011,256798011',
+    browseNodes: ['228013', '2244166011', '256798011'],
     mainImageUrl: 'https://m.media-amazon.com/images/I/71MNO123pqr.jpg',
-    otherImageUrls: ['https://m.media-amazon.com/images/I/71STU456vwx.jpg'],
+    otherImageUrl1: 'https://m.media-amazon.com/images/I/71STU456vwx.jpg',
     bulletPoints: [
       'Heavy duty 5-inch drill brush',
       'Perfect for large surface cleaning',
@@ -54,12 +54,14 @@ const sampleAmazonProducts = [
     ],
     genericKeywords:
       'heavy duty drill brush, large cleaning brush, power scrubber, industrial cleaning',
-    itemWeight: 0.8,
-    itemWeightUnit: 'pounds',
-    itemLength: 8.0,
-    itemWidth: 5.0,
-    itemHeight: 3.0,
-    itemDimensionsUnit: 'inches',
+    itemWeight: '0.8',
+    itemWeightUnitOfMeasure: 'pounds',
+    itemLength: '8.0',
+    itemWidth: '5.0',
+    itemHeight: '3.0',
+    itemLengthUnitOfMeasure: 'inches',
+    itemWidthUnitOfMeasure: 'inches',
+    itemHeightUnitOfMeasure: 'inches',
     listingStatus: 'active',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -71,13 +73,11 @@ const sampleAmazonProducts = [
     productDescription:
       'Soft bristle drill brush designed for delicate surfaces. Safe for car interiors, upholstery, and sensitive materials.',
     feedProductType: 'Tools',
-    browseNodes: '228013,2244166011,15684181',
+    browseNodes: ['228013', '2244166011', '15684181'],
     mainImageUrl: 'https://m.media-amazon.com/images/I/71YZA123bcd.jpg',
-    otherImageUrls: [
-      'https://m.media-amazon.com/images/I/71EFG456hij.jpg',
-      'https://m.media-amazon.com/images/I/71KLM789nop.jpg',
-      'https://m.media-amazon.com/images/I/71QRS012tuv.jpg',
-    ],
+    otherImageUrl1: 'https://m.media-amazon.com/images/I/71EFG456hij.jpg',
+    otherImageUrl2: 'https://m.media-amazon.com/images/I/71KLM789nop.jpg',
+    otherImageUrl3: 'https://m.media-amazon.com/images/I/71QRS012tuv.jpg',
     bulletPoints: [
       'Soft bristles for delicate surfaces',
       'Safe for car interiors and upholstery',
@@ -87,12 +87,14 @@ const sampleAmazonProducts = [
     ],
     genericKeywords:
       'soft drill brush, delicate cleaning, car interior, upholstery cleaner, gentle brush',
-    itemWeight: 0.3,
-    itemWeightUnit: 'pounds',
-    itemLength: 5.0,
-    itemWidth: 3.0,
-    itemHeight: 2.0,
-    itemDimensionsUnit: 'inches',
+    itemWeight: '0.3',
+    itemWeightUnitOfMeasure: 'pounds',
+    itemLength: '5.0',
+    itemWidth: '3.0',
+    itemHeight: '2.0',
+    itemLengthUnitOfMeasure: 'inches',
+    itemWidthUnitOfMeasure: 'inches',
+    itemHeightUnitOfMeasure: 'inches',
     listingStatus: 'active',
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -113,7 +115,9 @@ async function seedAmazonData() {
 
     // Display seeded products
     insertedProducts.forEach((product, index) => {
-      console.log(`${index + 1}. ${product.itemName} (SKU: ${product.amazonSku})`)
+      console.log(
+        `${index + 1}. ${product.itemName || 'Unknown Product'} (SKU: ${product.amazonSku})`
+      )
     })
 
     console.log('🎉 Amazon data seeding completed!')
