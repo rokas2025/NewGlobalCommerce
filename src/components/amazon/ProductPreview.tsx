@@ -391,7 +391,9 @@ export default function ProductPreviewComponent({
               value={`${sortBy}-${sortOrder}`}
               onValueChange={value => {
                 const [by, order] = value.split('-')
-                handleSort(by, order)
+                if (by && order) {
+                  handleSort(by, order)
+                }
               }}
             >
               <SelectTrigger className="w-[150px]">
@@ -489,7 +491,7 @@ export default function ProductPreviewComponent({
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <DollarSign className="h-3 w-3" />
-                      {formatPrice(product.price)}
+                      {formatPrice(product.price ?? null)}
                     </div>
                   </TableCell>
                   <TableCell>

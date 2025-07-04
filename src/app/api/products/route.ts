@@ -164,6 +164,11 @@ export async function GET(request: NextRequest) {
         bValue = new Date(bValue as string).getTime()
       }
 
+      // Handle null values
+      if (aValue === null && bValue === null) return 0
+      if (aValue === null) return sortOrder === 'asc' ? 1 : -1
+      if (bValue === null) return sortOrder === 'asc' ? -1 : 1
+
       if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1
       if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1
       return 0
