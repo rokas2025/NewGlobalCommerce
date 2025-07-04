@@ -804,29 +804,26 @@ export class DataTransformer {
 
     const tags: string[] = []
 
-    // Add brand as tag
-    if (productData.brand) {
-      tags.push(productData.brand)
+    // Add brand as tag (handle both ProductPreview and AmazonProduct)
+    if ('brand_name' in productData && productData.brand_name) {
+      tags.push(productData.brand_name)
     }
 
-    // Add product type as tag
-    if (productData.feedProductType) {
-      tags.push(productData.feedProductType)
+    // Add product type as tag (handle both types)
+    if ('amazonData' in productData && productData.amazonData?.feedProductType) {
+      tags.push(productData.amazonData.feedProductType)
+    } else if ('feed_product_type' in productData && productData.feed_product_type) {
+      tags.push(productData.feed_product_type)
     }
 
-    // Add category as tag
-    if (productData.productCategory) {
-      tags.push(productData.productCategory)
+    // For ProductPreview, extract existing tags
+    if ('tags' in productData && productData.tags) {
+      tags.push(...productData.tags)
     }
 
-    // Add subcategory as tag
-    if (productData.productSubcategory) {
-      tags.push(productData.productSubcategory)
-    }
-
-    // Extract keywords from search terms
-    if (productData.searchTerms) {
-      const keywords = productData.searchTerms
+    // For AmazonProduct, extract keywords from generic_keywords
+    if ('generic_keywords' in productData && productData.generic_keywords) {
+      const keywords = productData.generic_keywords
         .split(/[,;]/)
         .map(term => term.trim())
         .filter(term => term.length > 2)

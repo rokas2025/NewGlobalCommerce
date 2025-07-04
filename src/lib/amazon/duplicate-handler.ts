@@ -22,7 +22,6 @@ export class DuplicateHandler {
 
   constructor(options: DuplicateHandlingOptions = { strategy: 'skip' }) {
     this.options = {
-      strategy: 'skip',
       renamePattern: '{sku}-amazon-{timestamp}',
       mergeFields: ['images', 'tags', 'description'],
       compareFields: ['name', 'price', 'description', 'images'],
