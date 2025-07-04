@@ -1,29 +1,29 @@
 'use client'
 
-import * as React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import {
-  Home,
-  Package,
-  ShoppingCart,
-  Users,
   BarChart3,
-  Settings,
-  Menu,
+  Brain,
   ChevronLeft,
-  ShoppingBag,
-  Warehouse,
-  Tags,
   FileText,
   Globe,
-  Brain,
   HelpCircle,
+  Home,
+  Menu,
+  Package,
+  Settings,
+  ShoppingBag,
+  ShoppingCart,
+  Tags,
+  Users,
+  Warehouse,
 } from '@/lib/icons'
+import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import * as React from 'react'
 
 interface SidebarProps {
   className?: string
@@ -72,6 +72,12 @@ const navItems: NavItem[] = [
         icon: Warehouse,
       },
     ],
+  },
+  {
+    title: 'Amazon Import',
+    href: '/amazon/import',
+    icon: FileText,
+    badge: 'New',
   },
   {
     title: 'Orders',
@@ -154,14 +160,14 @@ export function Sidebar({ className, isCollapsed = false, onToggle }: SidebarPro
 
   if (isCollapsed) {
     return (
-      <div className={cn('bg-background border-r', className)}>
+      <div className={cn('border-r bg-background', className)}>
         <NavContent />
       </div>
     )
   }
 
   return (
-    <div className={cn('bg-background border-r', className)}>
+    <div className={cn('border-r bg-background', className)}>
       <NavContent />
     </div>
   )
@@ -234,7 +240,7 @@ function NavItem({ item, pathname, isCollapsed, level = 0 }: NavItemProps) {
             <item.icon className="mr-2 h-4 w-4" />
             <span className="flex-1">{item.title}</span>
             {item.badge && (
-              <span className="bg-primary text-primary-foreground ml-auto rounded-full px-2 py-0.5 text-xs">
+              <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
                 {item.badge}
               </span>
             )}
@@ -247,7 +253,7 @@ function NavItem({ item, pathname, isCollapsed, level = 0 }: NavItemProps) {
             <item.icon className="mr-2 h-4 w-4" />
             <span className="flex-1">{item.title}</span>
             {item.badge && (
-              <span className="bg-primary text-primary-foreground ml-auto rounded-full px-2 py-0.5 text-xs">
+              <span className="ml-auto rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
                 {item.badge}
               </span>
             )}

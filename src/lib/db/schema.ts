@@ -222,6 +222,167 @@ export const productImages = pgTable(
 )
 
 // =============================================================================
+// AMAZON INTEGRATION TABLES
+// =============================================================================
+
+export const amazonProductData = pgTable(
+  'amazon_product_data',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    productId: uuid('product_id').references(() => products.id, { onDelete: 'cascade' }),
+
+    // Core Amazon identifiers
+    amazonSku: text('amazon_sku').notNull(),
+    amazonAsin: text('amazon_asin'),
+    externalProductId: text('external_product_id'), // EAN/UPC
+    externalProductIdType: text('external_product_id_type'), // EAN/UPC/etc
+
+    // Product hierarchy and relationships
+    parentSku: text('parent_sku'),
+    parentChild: text('parent_child'), // Parent/Child/Standalone
+    relationshipType: text('relationship_type'), // variation
+    variationTheme: text('variation_theme'), // Color, Size, etc
+
+    // Basic product info
+    feedProductType: text('feed_product_type'),
+    brandName: text('brand_name'),
+    manufacturer: text('manufacturer'),
+    model: text('model'),
+    partNumber: text('part_number'),
+
+    // Amazon listing details
+    listingStatus: text('listing_status'),
+    updateDelete: text('update_delete'),
+    browseNodes: text('browse_nodes').array(),
+    recommendedBrowseNodes: text('recommended_browse_nodes'),
+
+    // Product characteristics
+    colorName: text('color_name'),
+    sizeName: text('size_name'),
+    materialType: text('material_type'),
+    handleMaterial: text('handle_material'),
+    itemShape: text('item_shape'),
+    itemTypeName: text('item_type_name'),
+
+    // Quantities and packaging
+    numberOfPieces: text('number_of_pieces'),
+    numberOfItems: text('number_of_items'),
+    numberOfBoxes: text('number_of_boxes'),
+    unitCount: text('unit_count'),
+    unitCountType: text('unit_count_type'),
+    itemPackageQuantity: text('item_package_quantity'),
+
+    // Physical dimensions
+    itemWidth: text('item_width'),
+    itemHeight: text('item_height'),
+    itemLength: text('item_length'),
+    itemWidthUnitOfMeasure: text('item_width_unit_of_measure'),
+    itemHeightUnitOfMeasure: text('item_height_unit_of_measure'),
+    itemLengthUnitOfMeasure: text('item_length_unit_of_measure'),
+
+    // Alternative dimension fields
+    lengthHeadToToe: text('length_head_to_toe'),
+    lengthHeadToToeUnitOfMeasure: text('length_head_to_toe_unit_of_measure'),
+    lengthWidthSideToSide: text('length_width_side_to_side'),
+    lengthWidthSideToSideUnitOfMeasure: text('length_width_side_to_side_unit_of_measure'),
+    lengthHeightFloorToTop: text('length_height_floor_to_top'),
+    lengthHeightFloorToTopUnitOfMeasure: text('length_height_floor_to_top_unit_of_measure'),
+
+    // Package dimensions
+    packageLength: text('package_length'),
+    packageWidth: text('package_width'),
+    packageHeight: text('package_height'),
+    packageWeight: text('package_weight'),
+    packageLengthUnitOfMeasure: text('package_length_unit_of_measure'),
+    packageWidthUnitOfMeasure: text('package_width_unit_of_measure'),
+    packageHeightUnitOfMeasure: text('package_height_unit_of_measure'),
+    packageWeightUnitOfMeasure: text('package_weight_unit_of_measure'),
+
+    // Weight
+    itemWeight: text('item_weight'),
+    itemWeightUnitOfMeasure: text('item_weight_unit_of_measure'),
+
+    // Special attributes
+    specialFeatures1: text('special_features1'),
+    specialFeatures2: text('special_features2'),
+    specialFeatures3: text('special_features3'),
+    specialFeatures4: text('special_features4'),
+    specialFeatures5: text('special_features5'),
+
+    // Included components
+    includedComponents1: text('included_components1'),
+    includedComponents2: text('included_components2'),
+    includedComponents3: text('included_components3'),
+    includedComponents4: text('included_components4'),
+    includedComponents5: text('included_components5'),
+
+    // Usage and compatibility
+    specificUsesForProduct: text('specific_uses_for_product'),
+    surfaceRecommendation: text('surface_recommendation'),
+    powerPlugType: text('power_plug_type'),
+
+    // Regulatory and safety
+    isFragile: text('is_fragile'),
+    batteriesRequired: text('batteries_required'),
+    supplierDeclaredDgHzRegulation1: text('supplier_declared_dg_hz_regulation1'),
+    supplierDeclaredMaterialRegulation1: text('supplier_declared_material_regulation1'),
+    countryOfOrigin: text('country_of_origin'),
+    conditionType: text('condition_type'),
+
+    // Multi-language support
+    languageValue1: text('language_value1'),
+    languageValue2: text('language_value2'),
+    languageValue3: text('language_value3'),
+    languageValue4: text('language_value4'),
+
+    // Pricing fields
+    listPriceWithTax: text('list_price_with_tax'),
+    minimumSellerAllowedPrice: text('minimum_seller_allowed_price'),
+    maximumSellerAllowedPrice: text('maximum_seller_allowed_price'),
+
+    // Gift options
+    offeringCanBeGiftMessaged: text('offering_can_be_gift_messaged'),
+    offeringCanBeGiftwrapped: text('offering_can_be_giftwrapped'),
+
+    // Fulfillment and shipping
+    merchantShippingGroupName: text('merchant_shipping_group_name'),
+    fulfillmentChannelCode: text('fulfillment_channel_code'),
+
+    // Color mapping
+    colorMap: text('color_map'),
+
+    // Existing fields
+    bulletPoints: text('bullet_points').array(),
+    searchTerms: text('search_terms').array(),
+    genericKeywords: text('generic_keywords'),
+    marketplaceData: jsonb('marketplace_data').default('{}'),
+    amazonAttributes: jsonb('amazon_attributes').default('{}'), // For any additional fields
+
+    // Timestamps
+    importedAt: timestamp('imported_at', { withTimezone: true }).defaultNow(),
+    lastSyncedAt: timestamp('last_synced_at', { withTimezone: true }),
+    metadata: jsonb('metadata').default('{}'),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+  },
+  table => ({
+    productIdIdx: index('amazon_product_data_product_id_idx').on(table.productId),
+    amazonSkuIdx: index('amazon_product_data_amazon_sku_idx').on(table.amazonSku),
+    amazonAsinIdx: index('amazon_product_data_amazon_asin_idx').on(table.amazonAsin),
+    feedProductTypeIdx: index('amazon_product_data_feed_product_type_idx').on(
+      table.feedProductType
+    ),
+    listingStatusIdx: index('amazon_product_data_listing_status_idx').on(table.listingStatus),
+    brandNameIdx: index('amazon_product_data_brand_name_idx').on(table.brandName),
+    parentSkuIdx: index('amazon_product_data_parent_sku_idx').on(table.parentSku),
+    externalProductIdIdx: index('amazon_product_data_external_product_id_idx').on(
+      table.externalProductId
+    ),
+    importedAtIdx: index('amazon_product_data_imported_at_idx').on(table.importedAt),
+  })
+)
+
+// =============================================================================
 // INVENTORY MANAGEMENT TABLES
 // =============================================================================
 
@@ -631,6 +792,8 @@ export type ProductCategory = typeof productCategories.$inferSelect
 export type NewProductCategory = typeof productCategories.$inferInsert
 export type ProductImage = typeof productImages.$inferSelect
 export type NewProductImage = typeof productImages.$inferInsert
+export type AmazonProductData = typeof amazonProductData.$inferSelect
+export type NewAmazonProductData = typeof amazonProductData.$inferInsert
 
 // Inventory types
 export type Warehouse = typeof warehouses.$inferSelect

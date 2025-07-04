@@ -8,6 +8,20 @@
       "when": 1750089602498,
       "tag": "0000_friendly_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1751560092774,
+      "tag": "0001_wealthy_war_machine",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751610301474,
+      "tag": "0002_next_killmonger",
+      "breakpoints": true
     }
   ]
 }
