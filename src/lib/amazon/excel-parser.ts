@@ -98,6 +98,18 @@ export class ExcelParser {
 
     return this.workbook.SheetNames.map(sheetName => {
       const worksheet = this.workbook!.Sheets[sheetName]
+
+      // Check if worksheet exists
+      if (!worksheet) {
+        return {
+          sheetName,
+          headers: [],
+          data: [],
+          rowCount: 0,
+          columnCount: 0,
+        }
+      }
+
       const range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1')
 
       // Convert sheet to array of arrays

@@ -3,7 +3,7 @@ import { AmazonProduct, FieldMapping, ProductPreview } from '@/types/amazon'
 export interface MappingRule {
   amazonField: string
   dbField: string
-  transform?: (value: any) => any
+  transform?: (value: any, product?: any) => any
   required?: boolean
   validation?: (value: any) => boolean
 }
@@ -256,13 +256,17 @@ export class FieldMapper {
 
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i]
+      if (!key) continue // Skip empty keys
       if (!(key in current)) {
         current[key] = {}
       }
       current = current[key]
     }
 
-    current[keys[keys.length - 1]] = value
+    const lastKey = keys[keys.length - 1]
+    if (lastKey) {
+      current[lastKey] = value
+    }
   }
 
   /**
@@ -380,7 +384,15 @@ export class FieldMapper {
   public updateMappingRule(amazonField: string, updates: Partial<MappingRule>): void {
     const ruleIndex = this.mappingRules.findIndex(rule => rule.amazonField === amazonField)
     if (ruleIndex >= 0) {
-      this.mappingRules[ruleIndex] = { ...this.mappingRules[ruleIndex], ...updates }
+      // Only update defined values to maintain type safety
+      const currentRule = this.mappingRules[ruleIndex]! // We know it exists because ruleIndex >= 0
+      this.mappingRules[ruleIndex] = {
+        amazonField: updates.amazonField ?? currentRule.amazonField,
+        dbField: updates.dbField ?? currentRule.dbField,
+        transform: updates.transform ?? currentRule.transform,
+        required: updates.required ?? currentRule.required,
+        validation: updates.validation ?? currentRule.validation,
+      }
     }
   }
 }

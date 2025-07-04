@@ -16,18 +16,18 @@ export interface TransformedProductData {
     name: string
     description: string
     sku: string
-    price: number | null
-    salePrice: number | null
-    cost: number | null
+    price: string
+    salePrice: string | undefined
+    cost: string | undefined
     stock: number
     lowStockThreshold: number
     trackStock: boolean
-    weight: number | null
+    weight: string | undefined
     dimensions: string | null
     images: string
     tags: string
     categoryId: string
-    status: string
+    status: 'draft' | 'active' | 'inactive' | 'archived'
     featured: boolean
     metaTitle: string
     metaDescription: string
@@ -171,7 +171,7 @@ export interface TransformedProductData {
     productSubcategory?: string
     fulfillmentChannel?: string
     status?: string
-    yourPrice?: number | null
+    yourPrice?: number
     currency?: string
     quantity?: number
     leadTimeToShip?: number
@@ -252,18 +252,18 @@ export class DataTransformer {
       name,
       description: description || '',
       sku,
-      price,
-      salePrice,
-      cost: null,
+      price: price, // Already undefined if null
+      salePrice: salePrice, // Already undefined if null
+      cost: undefined,
       stock: this.settings.defaultStockLevel || 0,
       lowStockThreshold: 5,
       trackStock: true,
-      weight: this.extractWeight(productData),
+      weight: this.extractWeight(productData) || undefined, // Convert null to undefined for database
       dimensions: this.extractDimensions(productData),
       images: JSON.stringify(images),
       tags: JSON.stringify(tags),
       categoryId,
-      status: this.settings.defaultStatus || 'draft',
+      status: 'draft' as const,
       featured: false,
       metaTitle: this.generateMetaTitle(name),
       metaDescription: this.generateMetaDescription(description),
@@ -501,7 +501,7 @@ export class DataTransformer {
           ? productData.fulfillment_channel_code
           : 'DEFAULT',
       status: this.getListingStatus(productData) || 'active',
-      yourPrice: price,
+      yourPrice: parseFloat(price) || 0,
       currency: 'USD',
       quantity: 0,
       leadTimeToShip: 1,
@@ -606,33 +606,40 @@ export class DataTransformer {
     )
   }
 
-  private extractPrice(productData: any): number | null {
-    if (productData.price) return productData.price
-    if (productData.list_price_with_tax) return parseFloat(productData.list_price_with_tax)
+  private extractPrice(productData: any): string {
+    if (productData.price) return String(productData.price)
+    if (productData.list_price_with_tax) {
+      const price = parseFloat(productData.list_price_with_tax)
+      return isNaN(price) ? '0' : String(price)
+    }
     if (
       productData[
         'purchasable_offer[marketplace_id=A1F83G8C2ARO7P]#1.our_price#1.schedule#1.value_with_tax'
       ]
     ) {
-      return parseFloat(
+      const price = parseFloat(
         productData[
           'purchasable_offer[marketplace_id=A1F83G8C2ARO7P]#1.our_price#1.schedule#1.value_with_tax'
         ]
       )
+      return isNaN(price) ? '0' : String(price)
     }
-    return null
+    return '0' // Default price for required field
   }
 
-  private extractSalePrice(productData: any): number | null {
-    if (productData.salePrice) return productData.salePrice
-    if (productData.compareAtPrice) return productData.compareAtPrice
-    return null
+  private extractSalePrice(productData: any): string | undefined {
+    if (productData.salePrice) return String(productData.salePrice)
+    if (productData.compareAtPrice) return String(productData.compareAtPrice)
+    return undefined
   }
 
-  private extractWeight(productData: any): number | null {
-    if (productData.weight) return productData.weight
-    if (productData.item_weight) return parseFloat(productData.item_weight)
-    return null
+  private extractWeight(productData: any): string | undefined {
+    if (productData.weight) return String(productData.weight)
+    if (productData.item_weight) {
+      const weight = parseFloat(productData.item_weight)
+      return isNaN(weight) ? undefined : String(weight)
+    }
+    return undefined
   }
 
   private extractDimensions(productData: any): string | null {
@@ -766,13 +773,17 @@ export class DataTransformer {
     }
 
     // Validate price
-    if (transformedData.productData.price !== null && transformedData.productData.price < 0) {
-      errors.push('Price cannot be negative')
+    const price = parseFloat(transformedData.productData.price)
+    if (isNaN(price) || price < 0) {
+      errors.push('Price must be a valid positive number')
     }
 
     // Validate weight
-    if (transformedData.productData.weight !== null && transformedData.productData.weight < 0) {
-      errors.push('Weight cannot be negative')
+    if (transformedData.productData.weight !== undefined) {
+      const weight = parseFloat(transformedData.productData.weight)
+      if (isNaN(weight) || weight < 0) {
+        errors.push('Weight must be a valid positive number')
+      }
     }
 
     // Validate stock

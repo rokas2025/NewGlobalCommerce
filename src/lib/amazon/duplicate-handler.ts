@@ -45,10 +45,11 @@ export class DuplicateHandler {
       }
 
       // Product exists, get Amazon data if available
+      const product = existingProduct[0]! // We know it exists because we checked length above
       const existingAmazonData = await db
         .select()
         .from(amazonProductData)
-        .where(eq(amazonProductData.productId, existingProduct[0].id))
+        .where(eq(amazonProductData.productId, product.id))
         .limit(1)
 
       // Determine action based on strategy
@@ -79,7 +80,7 @@ export class DuplicateHandler {
 
       return {
         isDuplicate: true,
-        existingProduct: existingProduct[0],
+        existingProduct: product,
         existingAmazonData: existingAmazonData[0] || null,
         action,
         reason,
@@ -99,11 +100,13 @@ export class DuplicateHandler {
   generateNewSku(originalSku: string): string {
     const timestamp = Date.now()
     const pattern = this.options.renamePattern || '{sku}-amazon-{timestamp}'
+    const dateString =
+      new Date().toISOString().split('T')[0] || new Date().toISOString().substring(0, 10)
 
     return pattern
       .replace('{sku}', originalSku)
       .replace('{timestamp}', timestamp.toString())
-      .replace('{date}', new Date().toISOString().split('T')[0])
+      .replace('{date}', dateString)
   }
 
   /**
@@ -216,10 +219,20 @@ export class DuplicateHandler {
     duplicateSkus: string[]
   }> {
     try {
+      // Handle empty array case
+      if (skus.length === 0) {
+        return {
+          total: 0,
+          duplicates: 0,
+          new: 0,
+          duplicateSkus: [],
+        }
+      }
+
       const existingProducts = await db
         .select({ sku: products.sku })
         .from(products)
-        .where(eq(products.sku, skus[0])) // This would need to be modified for multiple SKUs
+        .where(eq(products.sku, skus[0]!)) // We know it exists because we checked length above
 
       // For multiple SKUs, we'd need to use a different approach
       // This is a simplified version

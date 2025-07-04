@@ -100,6 +100,7 @@ export class ImportProcessor {
 
       for (let i = 0; i < batches.length; i++) {
         const batch = batches[i]
+        if (!batch) continue // Skip empty batches
         this.log(`Processing batch ${i + 1}/${batches.length} (${batch.length} products)`)
 
         for (const productData of batch) {
@@ -205,6 +206,10 @@ export class ImportProcessor {
 
     // Insert product
     const [newProduct] = await db.insert(products).values(transformedData.productData).returning()
+
+    if (!newProduct) {
+      throw new Error('Failed to create product - no product returned from database')
+    }
 
     // Insert Amazon data
     await db.insert(amazonProductData).values({
